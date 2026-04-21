@@ -4,27 +4,24 @@
       {
         "description": "UCP Extension",
         "required": true,
-        "uri": "https://ucp.dev/specification/reference?v=2026-01-11",
+        "uri": "https://ucp.dev/2026-01-23/specification/overview?v=2026-01-23",
         "params": {
           "capabilities": [
             {
-              "name": "dev.ucp.shopping.checkout",
-              "version": "2026-01-11",
-              "spec": "https://ucp.dev/specs/shopping/checkout",
-              "schema": "https://ucp.dev/schemas/shopping/checkout.json"
+              "version": "2026-01-23",
+              "spec": "https://ucp.dev/2026-01-23/specification/shopping/checkout",
+              "schema": "https://ucp.dev/2026-01-23/schemas/shopping/checkout.json"
             },
             {
-              "name": "dev.ucp.shopping.fulfillment",
-              "version": "2026-01-11",
-              "spec": "https://ucp.dev/specs/shopping/fulfillment",
-              "schema": "https://ucp.dev/schemas/shopping/fulfillment.json",
+              "version": "2026-01-23",
+              "spec": "https://ucp.dev/2026-01-23/specification/shopping/fulfillment",
+              "schema": "https://ucp.dev/2026-01-23/schemas/shopping/fulfillment.json",
               "extends": "dev.ucp.shopping.checkout"
             },
             {
-              "name": "dev.ucp.shopping.discount",
-              "version": "2026-01-11",
-              "spec": "https://ucp.dev/specs/shopping/discount",
-              "schema": "https://ucp.dev/schemas/shopping/discount.json",
+              "version": "2026-01-23",
+              "spec": "https://ucp.dev/2026-01-23/specification/shopping/discount",
+              "schema": "https://ucp.dev/2026-01-23/schemas/shopping/discount.json",
               "extends": "dev.ucp.shopping.checkout"
             }
           ]
@@ -33,16 +30,8 @@
     ],
     "streaming": false
   },
-  "defaultInputModes": [
-    "text",
-    "text/plain",
-    "application/json"
-  ],
-  "defaultOutputModes": [
-    "text",
-    "text/plain",
-    "application/json"
-  ],
+  "defaultInputModes": ["text", "text/plain", "application/json"],
+  "defaultOutputModes": ["text", "text/plain", "application/json"],
   "description": "SuperStore Merchant Agent",
   "name": "SuperStore Merchant Agent",
   "preferredTransport": "JSONRPC",
@@ -54,16 +43,10 @@
   "skills": [
     {
       "description": "Helps with product search for given user criteria",
-      "examples": [
-        "Help me find a shirt for my weekend trip"
-      ],
+      "examples": ["Help me find a shirt for my weekend trip"],
       "id": "product_search",
       "name": "Perform product search",
-      "tags": [
-        "shopping",
-        "search",
-        "catalog search"
-      ]
+      "tags": ["shopping", "search", "catalog search"]
     },
     {
       "description": "Adds Checkout functionality for the agent",
@@ -74,9 +57,7 @@
       ],
       "id": "checkout",
       "name": "Checkout",
-      "tags": [
-        "checkout"
-      ]
+      "tags": ["checkout"]
     }
   ],
   "url": "http://localhost:10999",

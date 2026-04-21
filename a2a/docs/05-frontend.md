@@ -43,14 +43,14 @@ const [taskId, setTaskId] = useState<string | null>(null);
 
 ### Handler Functions
 
-| Handler | Purpose |
-|---------|---------|
-| `handleSendMessage(content, options)` | Send A2A message, parse response |
-| `handleAddToCheckout(product)` | Add product to cart |
-| `handleStartPayment()` | Initiate payment flow |
-| `handlePaymentMethodSelection(checkout)` | Fetch available methods |
-| `handlePaymentMethodSelected(method)` | Get payment token |
-| `handleConfirmPayment(instrument)` | Complete checkout |
+| Handler                                  | Purpose                          |
+| ---------------------------------------- | -------------------------------- |
+| `handleSendMessage(content, options)`    | Send A2A message, parse response |
+| `handleAddToCheckout(product)`           | Add product to cart              |
+| `handleStartPayment()`                   | Initiate payment flow            |
+| `handlePaymentMethodSelection(checkout)` | Fetch available methods          |
+| `handlePaymentMethodSelected(method)`    | Get payment token                |
+| `handleConfirmPayment(instrument)`       | Complete checkout                |
 
 ## A2A Communication
 
@@ -64,22 +64,23 @@ const request = {
   params: {
     message: {
       role: "user",
-      parts: [{type: "text", text: "show me cookies"}],
-      contextId: contextId,  // From previous response
-      taskId: taskId,        // For multi-turn tasks
+      parts: [{ type: "text", text: "show me cookies" }],
+      contextId: contextId, // From previous response
+      taskId: taskId, // For multi-turn tasks
     },
-    configuration: { historyLength: 0 }
-  }
+    configuration: { historyLength: 0 },
+  },
 };
 
 fetch("/api", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "X-A2A-Extensions": "https://ucp.dev/specification/reference?v=2026-01-11",
-    "UCP-Agent": `profile="http://localhost:3000/profile/agent_profile.json"`
+    "X-A2A-Extensions":
+      "https://ucp.dev/2026-01-23/specification/overview?v=2026-01-23",
+    "UCP-Agent": `profile="http://localhost:3000/profile/agent_profile.json"`,
   },
-  body: JSON.stringify(request)
+  body: JSON.stringify(request),
 });
 ```
 
@@ -107,20 +108,20 @@ for (const part of data.result?.status?.message?.parts || []) {
 
 ## Key Components
 
-| Component | Props | Renders |
-|-----------|-------|---------|
-| `ProductCard` | `product`, `onAddToCart` | Product image, name, price, stock |
-| `Checkout` | `checkout`, `onCheckout`, `onCompletePayment` | Line items, totals, action buttons |
-| `PaymentMethodSelector` | `paymentMethods`, `onSelect` | Radio list of methods |
-| `PaymentConfirmation` | `paymentInstrument`, `onConfirm` | Confirm button |
-| `ChatMessage` | `message`, handlers | Combines all above based on data |
+| Component               | Props                                         | Renders                            |
+| ----------------------- | --------------------------------------------- | ---------------------------------- |
+| `ProductCard`           | `product`, `onAddToCart`                      | Product image, name, price, stock  |
+| `Checkout`              | `checkout`, `onCheckout`, `onCompletePayment` | Line items, totals, action buttons |
+| `PaymentMethodSelector` | `paymentMethods`, `onSelect`                  | Radio list of methods              |
+| `PaymentConfirmation`   | `paymentInstrument`, `onConfirm`              | Confirm button                     |
+| `ChatMessage`           | `message`, handlers                           | Combines all above based on data   |
 
 ## Types (types.ts)
 
 ```typescript
 interface ChatMessage {
   id: string;
-  sender: Sender;          // USER | MODEL
+  sender: Sender; // USER | MODEL
   text: string;
   products?: Product[];
   isLoading?: boolean;
@@ -135,7 +136,7 @@ interface Checkout {
   line_items: CheckoutItem[];
   currency: string;
   continue_url?: string | null;
-  status: string;          // incomplete | ready_for_complete | completed
+  status: string; // incomplete | ready_for_complete | completed
   totals: CheckoutTotal[];
   order_id?: string;
   order_permalink_url?: string;
@@ -156,14 +157,17 @@ interface Product {
   description: string;
   size: { name: string };
 }
-
-interface PaymentMethod {
-  id: string;
-  type: string;
+interface DisplayInfo {
   brand: string;
   last_digits: string;
   expiry_month: number;
   expiry_year: number;
+}
+
+interface PaymentMethod {
+  id: string;
+  type: string;
+  display: DisplayInfo;
 }
 ```
 
@@ -173,21 +177,36 @@ Mock payment provider in `mocks/credentialProviderProxy.ts`:
 
 ```typescript
 class CredentialProviderProxy {
-  handler_id = 'example_payment_provider';
-  handler_name = 'example.payment.provider';
+  handler_id = "example_payment_provider";
 
   // Returns mock payment methods (wrapped in object)
   async getSupportedPaymentMethods(
     user_email: string,
     config: any
-  ): Promise<{payment_method_aliases: PaymentMethod[]}> {
+  ): Promise<{ payment_method_aliases: PaymentMethod[] }> {
     return {
       payment_method_aliases: [
-        { id: "instr_1", type: "card", brand: "amex",
-          last_digits: "1111", expiry_month: 12, expiry_year: 2026 },
-        { id: "instr_2", type: "card", brand: "visa",
-          last_digits: "8888", expiry_month: 12, expiry_year: 2026 },
-      ]
+        {
+          id: "instr_1",
+          type: "card",
+          display: {
+            brand: "amex",
+            last_digits: "1111",
+            expiry_month: 12,
+            expiry_year: 2026,
+          },
+        },
+        {
+          id: "instr_2",
+          type: "card",
+          display: {
+            brand: "visa",
+            last_digits: "8888",
+            expiry_month: 12,
+            expiry_year: 2026,
+          },
+        },
+      ],
     };
   }
 
@@ -199,8 +218,7 @@ class CredentialProviderProxy {
     return {
       ...payment_method,
       handler_id: this.handler_id,
-      handler_name: this.handler_name,
-      credential: { type: "token", token: `mock_token_${uuid}` }
+      credential: { type: "token", token: `mock_token_${uuid}` },
     };
   }
 }

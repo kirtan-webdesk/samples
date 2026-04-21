@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 export enum Sender {
-  USER = 'user',
-  MODEL = 'model',
+  USER = "user",
+  MODEL = "model",
 }
 
 export interface Product {
   productID: string;
   name: string;
   image: string[];
-  brand: {name: string};
+  brand: { name: string };
   offers: {
     price: string;
     priceCurrency: string;
@@ -40,18 +40,21 @@ export interface Credential {
   token: string;
 }
 
-export interface PaymentMethod {
-  id: string;
-  type: string;
+export interface DisplayInfo {
   brand: string;
   last_digits: string;
   expiry_month: number;
   expiry_year: number;
 }
 
+export interface PaymentMethod {
+  id: string;
+  type: string;
+  display: DisplayInfo;
+}
+
 export interface PaymentInstrument extends PaymentMethod {
   handler_id: string;
-  handler_name: string;
   credential: Credential;
 }
 
@@ -66,7 +69,6 @@ export interface ChatMessage {
   checkout?: Checkout;
   paymentInstrument?: PaymentInstrument;
 }
-
 
 export interface CheckoutTotal {
   type: string;

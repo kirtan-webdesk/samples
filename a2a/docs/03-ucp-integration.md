@@ -11,11 +11,13 @@
 Different commerce platforms support different features. A basic merchant might only support checkout, while an advanced one offers loyalty points, subscriptions, and gift cards.
 
 **Without negotiation**:
+
 - Client assumes all features available → breaks when merchant lacks support
 - Merchant sends all data → client can't render unknown fields
 - Tight coupling between specific client and merchant versions
 
 **With negotiation**:
+
 - Client declares what it supports: "I can handle checkout, fulfillment, discounts"
 - Merchant declares what it offers: "I support checkout, fulfillment"
 - Intersection becomes the contract: "We'll use checkout + fulfillment"
@@ -25,12 +27,12 @@ This enables any UCP-compliant client to work with any UCP-compliant merchant.
 
 ## UCP Capabilities
 
-| Capability | Purpose | Extends |
-|------------|---------|---------|
-| `dev.ucp.shopping.checkout` | Base checkout session | - |
-| `dev.ucp.shopping.fulfillment` | Shipping address, delivery options | checkout |
-| `dev.ucp.shopping.discount` | Promotional codes | checkout |
-| `dev.ucp.shopping.buyer_consent` | Consent management | checkout |
+| Capability                       | Purpose                            | Extends  |
+| -------------------------------- | ---------------------------------- | -------- |
+| `dev.ucp.shopping.checkout`      | Base checkout session              | -        |
+| `dev.ucp.shopping.fulfillment`   | Shipping address, delivery options | checkout |
+| `dev.ucp.shopping.discount`      | Promotional codes                  | checkout |
+| `dev.ucp.shopping.buyer_consent` | Consent management                 | checkout |
 
 ## Profile Structure
 
@@ -39,11 +41,11 @@ This enables any UCP-compliant client to work with any UCP-compliant merchant.
 ```json
 {
   "ucp": {
-    "version": "2026-01-11",
+    "version": "2026-01-23",
     "services": {
       "dev.ucp.shopping": {
-        "version": "2026-01-11",
-        "spec": "https://ucp.dev/specs/shopping",
+        "version": "2026-01-23",
+        "spec": "https://ucp.dev/2026-01-23/specification/shopping",
         "a2a": {
           "endpoint": "http://localhost:10999/.well-known/agent-card.json"
         }
@@ -51,24 +53,24 @@ This enables any UCP-compliant client to work with any UCP-compliant merchant.
     },
     "capabilities": [
       {
-        "name": "dev.ucp.shopping.checkout",
-        "version": "2026-01-11",
-        "spec": "https://ucp.dev/specs/shopping/checkout",
-        "schema": "https://ucp.dev/schemas/shopping/checkout.json"
+        "version": "2026-01-23",
+        "spec": "https://ucp.dev/2026-01-23/specification/shopping/checkout",
+        "schema": "https://ucp.dev/2026-01-23/schemas/shopping/checkout.json"
       },
       {
-        "name": "dev.ucp.shopping.fulfillment",
-        "version": "2026-01-11",
+        "version": "2026-01-23",
         "extends": "dev.ucp.shopping.checkout"
       }
     ]
   },
   "payment": {
-    "handlers": [{
-      "id": "example_payment_provider",
-      "name": "example.payment.provider",
-      "version": "2026-01-11"
-    }]
+    "handlers": [
+      {
+        "id": "example_payment_provider",
+        "name": "example.payment.provider",
+        "version": "2026-01-23"
+      }
+    ]
   }
 }
 ```
@@ -80,12 +82,12 @@ This enables any UCP-compliant client to work with any UCP-compliant merchant.
 ```json
 {
   "ucp": {
-    "version": "2026-01-11",
+    "version": "2026-01-23",
     "capabilities": [
-      {"name": "dev.ucp.shopping.checkout"},
-      {"name": "dev.ucp.shopping.fulfillment"},
-      {"name": "dev.ucp.shopping.discount"},
-      {"name": "dev.ucp.shopping.buyer_consent"}
+      { "name": "dev.ucp.shopping.checkout" },
+      { "name": "dev.ucp.shopping.fulfillment" },
+      { "name": "dev.ucp.shopping.discount" },
+      { "name": "dev.ucp.shopping.buyer_consent" }
     ]
   }
 }
@@ -177,16 +179,17 @@ UCP_RISK_SIGNALS_KEY = "a2a.ucp.checkout.risk_signals"  # Risk data
 ## Adding a New Capability
 
 1. **Update merchant profile** (`data/ucp.json`):
+
 ```json
 {
   "capabilities": [
     ...,
-    {"name": "dev.ucp.shopping.new_capability", "extends": "checkout"}
   ]
 }
 ```
 
 2. **Update type generator** (`helpers/type_generator.py`):
+
 ```python
 if "dev.ucp.shopping.new_capability" in active:
     bases.append(NewCapabilityCheckout)
